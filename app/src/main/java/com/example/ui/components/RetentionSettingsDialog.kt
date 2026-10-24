@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.SettingsBrightness
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -66,7 +67,8 @@ fun RetentionSettingsDialog(
     onSaveThemeMode: (AppThemeMode) -> Unit,
     onToggleDynamicColor: (Boolean) -> Unit,
     onCleanNow: () -> Unit,
-    onClearHistory: (keepPinned: Boolean) -> Unit
+    onClearHistory: (keepPinned: Boolean) -> Unit,
+    onCheckForUpdates: () -> Unit
 ) {
     var selectedOption by remember {
         mutableStateOf(
@@ -423,6 +425,44 @@ fun RetentionSettingsDialog(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Clear Clip History...")
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Section 5: App Updates
+                Text(
+                    text = "App Updates",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Check the official repository for new versions, security patches, and features.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                FilledTonalButton(
+                    onClick = {
+                        onDismiss()
+                        onCheckForUpdates()
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("settings_check_updates_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SystemUpdate,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Check for updates")
                 }
             }
         },

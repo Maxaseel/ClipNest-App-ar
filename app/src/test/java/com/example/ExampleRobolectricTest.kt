@@ -145,4 +145,32 @@ class ExampleRobolectricTest {
         assertTrue(remaining.any { it.content == "Fresh clip" })
         assertFalse(remaining.any { it.content == "Old clip to delete" })
     }
+
+    @Test
+    fun `update json parses version details and sha256 correctly`() {
+        val jsonString = """
+            {
+              "versionCode": 2,
+              "versionName": "1.1.0",
+              "releaseNotes": "Performance improvements and bug fixes",
+              "apkUrl": "https://github.com/aiwebnix-oss/ClipNest-App/releases/download/v1.1.0/ClipNest.apk",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+        """.trimIndent()
+
+        val json = org.json.JSONObject(jsonString)
+        val info = com.example.data.update.UpdateInfo(
+            versionCode = json.getInt("versionCode"),
+            versionName = json.getString("versionName"),
+            releaseNotes = json.getString("releaseNotes"),
+            apkUrl = json.getString("apkUrl"),
+            sha256 = json.optString("sha256").ifBlank { null }
+        )
+
+        assertEquals(2, info.versionCode)
+        assertEquals("1.1.0", info.versionName)
+        assertEquals("Performance improvements and bug fixes", info.releaseNotes)
+        assertEquals("https://github.com/aiwebnix-oss/ClipNest-App/releases/download/v1.1.0/ClipNest.apk", info.apkUrl)
+        assertEquals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", info.sha256)
+    }
 }

@@ -49,6 +49,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import android.app.Activity
 import com.example.data.model.ClipItem
 import com.example.data.preferences.PreferenceManager
 import com.example.ui.components.AddEditClipDialog
@@ -56,6 +57,7 @@ import com.example.ui.components.ClipCard
 import com.example.ui.components.ClipNestTopBar
 import com.example.ui.components.EmptyStateView
 import com.example.ui.components.ExportHistoryDialog
+import com.example.ui.components.InAppUpdateDialog
 import com.example.ui.components.PrivacyBanner
 import com.example.ui.components.RetentionSettingsDialog
 import com.example.ui.components.SearchBarWithFilters
@@ -79,6 +81,10 @@ fun ClipNestScreen(
     val isPrivacyBannerDismissed by viewModel.isPrivacyBannerDismissed.collectAsStateWithLifecycle()
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
     val dynamicColor by viewModel.dynamicColor.collectAsStateWithLifecycle()
+    val updateState by viewModel.updateState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val activity = context as? Activity
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -302,6 +308,9 @@ fun ClipNestScreen(
             },
             onClearHistory = { keepPinned ->
                 viewModel.clearHistory(keepPinned)
+            },
+            onCheckForUpdates = {
+                viewModel.checkForUpdates(isManual = true)
             }
         )
     }
@@ -313,4 +322,18 @@ fun ClipNestScreen(
             onDismiss = { showExportDialog = false }
         )
     }
+
+    // In-App Update Dialog
+    InAppUpdateDialog(
+        updateState = updateState,
+        onDismiss = { viewModel.dismissUpdateDialog() },
+        onStartDownload = { info -> viewModel.startUpdateDownload(info) },
+        onCancelDownload = { viewModel.cancelUpdateDownload() },
+        onInstall = { apkFile ->
+            if (activity != null) {
+                viewModel.installDownloadedUpdate(activity, apkFile)
+            }
+        },
+        onRetryDownload = { info -> viewModel.startUpdateDownload(info) }
+    )
 }

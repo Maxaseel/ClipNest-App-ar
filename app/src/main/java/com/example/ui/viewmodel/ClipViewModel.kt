@@ -1,5 +1,6 @@
 package com.example.ui.viewmodel
 
+import android.app.Activity
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -13,6 +14,10 @@ import com.example.data.preferences.AppThemeMode
 import com.example.data.preferences.PreferenceManager
 import com.example.data.repository.ClipRepository
 import com.example.data.repository.SaveResult
+import com.example.data.update.UpdateInfo
+import com.example.data.update.UpdateManager
+import com.example.data.update.UpdateUiState
+import java.io.File
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -53,6 +58,11 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: ClipRepository
     private val clipboardManager: ClipboardManager =
         application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    private val updateManager = UpdateManager(application)
+
+    private val _updateState = MutableStateFlow<UpdateUiState>(UpdateUiState.Idle)
+    val updateState: StateFlow<UpdateUiState> = _updateState.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -180,6 +190,13 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
             cleanExpiredClipsSilently()
         }
 
+        // Check for updates automatically on app startup (silent if up to date)
+        viewModelScope.launch {
+            updateManager.checkForUpdate(isManual = false) { state ->
+                _updateState.value = state
+            }
+        }
+
         try {
             clipboardManager.addPrimaryClipChangedListener(clipChangedListener)
         } catch (_: Exception) {}
@@ -187,6 +204,7 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         super.onCleared()
+        updateManager.cancelDownload()
         try {
             clipboardManager.removePrimaryClipChangedListener(clipChangedListener)
         } catch (_: Exception) {}
@@ -360,6 +378,34 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setSortOption(sort: SortOption) {
         _sortOption.value = sort
+    }
+
+    fun checkForUpdates(isManual: Boolean = true) {
+        viewModelScope.launch {
+            updateManager.checkForUpdate(isManual = isManual) { state ->
+                _updateState.value = state
+            }
+        }
+    }
+
+    fun startUpdateDownload(info: UpdateInfo) {
+        updateManager.startDownload(info, viewModelScope) { state ->
+            _updateState.value = state
+        }
+    }
+
+    fun cancelUpdateDownload() {
+        updateManager.cancelDownload()
+        _updateState.value = UpdateUiState.Idle
+    }
+
+    fun dismissUpdateDialog() {
+        updateManager.cancelDownload()
+        _updateState.value = UpdateUiState.Idle
+    }
+
+    fun installDownloadedUpdate(activity: Activity, apkFile: File): Boolean {
+        return updateManager.promptInstall(activity, apkFile)
     }
 
     private suspend fun cleanExpiredClipsSilently() {
