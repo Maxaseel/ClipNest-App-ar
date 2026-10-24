@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MyApplication">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MyApplication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- Allow saving to ClipNest via Android Share Sheet from any app -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Quick Settings Tile for 1-tap capture from anywhere -->
+        <service
+            android:name=".service.ClipCaptureTileService"
+            android:icon="@drawable/ic_clipnest"
+            android:label="Capture Clip"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>
