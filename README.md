@@ -1,29 +1,25 @@
 <div align="center">
 
-<!-- Replace with your real logo: docs/assets/logo.png -->
-<img src="docs/assets/logo.png" alt="ClipNest logo" width="120" height="120" />
-
-# ClipNest
+# 📋 ClipNest
 
 ### Your Clipboard. Your History. Your Control.
 
-A modern Android clipboard manager that keeps everything you copy — searchable, persistent, and one tap away.
+A modern Android clipboard manager that keeps everything you copy — persistent, organized, and one tap away.
 
 <br />
 
-[![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](#-installation)
-[![Release](https://img.shields.io/github/v/release/USERNAME/ClipNest?style=for-the-badge&color=6C5CE7&label=Latest)](https://github.com/USERNAME/ClipNest/releases)
-[![Downloads](https://img.shields.io/github/downloads/USERNAME/ClipNest/total?style=for-the-badge&color=00B894&label=Downloads)](https://github.com/USERNAME/ClipNest/releases)
-[![Stars](https://img.shields.io/github/stars/USERNAME/ClipNest?style=for-the-badge&color=FDCB6E)](https://github.com/USERNAME/ClipNest/stargazers)
-[![Issues](https://img.shields.io/github/issues/USERNAME/ClipNest?style=for-the-badge&color=FF7675)](https://github.com/USERNAME/ClipNest/issues)
+![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![Distribution](https://img.shields.io/badge/Download-GitHub%20Releases-6C5CE7?style=for-the-badge&logo=github&logoColor=white)
+![Updates](https://img.shields.io/badge/Updates-In--App-00B894?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-In%20Development-FDCB6E?style=for-the-badge)
 
 <br />
 
-[**⬇️ Download**](https://github.com/USERNAME/ClipNest/releases) &nbsp;•&nbsp;
+[**⬇️ Download**](../../releases) &nbsp;•&nbsp;
 [**✨ Features**](#-features) &nbsp;•&nbsp;
 [**🔄 Updates**](#-in-app-updates) &nbsp;•&nbsp;
 [**🔒 Privacy**](#-privacy--security) &nbsp;•&nbsp;
-[**🗺️ Roadmap**](#%EF%B8%8F-roadmap)
+[**📍 Roadmap**](#-roadmap)
 
 </div>
 
@@ -36,20 +32,6 @@ A modern Android clipboard manager that keeps everything you copy — searchable
 > Copying something useful should never mean losing it the next time you copy something else.
 
 Your keyboard's clipboard forgets. Android's system clipboard holds exactly **one** thing. ClipNest sits in between and quietly keeps your history — text, links, snippets — so you can find it and reuse it whenever you need it.
-
-<br />
-
-## 📸 Screenshots
-
-<!-- Add real screenshots to docs/screenshots/ and update the paths below -->
-
-<div align="center">
-
-| Home | Search | Settings | Update |
-|:---:|:---:|:---:|:---:|
-| <img src="docs/screenshots/home.png" width="200" /> | <img src="docs/screenshots/search.png" width="200" /> | <img src="docs/screenshots/settings.png" width="200" /> | <img src="docs/screenshots/update.png" width="200" /> |
-
-</div>
 
 <br />
 
@@ -123,7 +105,7 @@ Background clipboard access varies by Android version and by what the app is doi
 
 ### 📦 Option 1 — Install a release (recommended)
 
-1. Go to the [**Releases**](https://github.com/USERNAME/ClipNest/releases) page.
+1. Go to the [**Releases**](../../releases) page.
 2. Download the latest `.apk` asset.
 3. Open it on your Android device.
 4. Allow *Install unknown apps* if Android asks.
@@ -230,7 +212,7 @@ Clipboard data can contain passwords, OTPs, private messages and personal info �
 
 <br />
 
-## 🗺️ Roadmap
+## 📍 Roadmap
 
 - [ ] Improve auto-capture reliability within Android's limits
 - [ ] History navigation and **search**
@@ -290,7 +272,5 @@ No license has been specified yet. Check the repository for a `LICENSE` file bef
 **ClipNest — A simpler way to keep what you copy.**
 
 Made with ❤️ by **Subham Kumar Prusty**
-
-⭐ If ClipNest helps you, consider starring the repo!
 
 </div>
