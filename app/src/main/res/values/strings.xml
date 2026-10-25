@@ -36,7 +36,7 @@
     <string name="settings_theme_appearance">Theme &amp; Appearance</string>
     <string name="settings_theme_appearance_description">Select your preferred visual style and color behavior.</string>
     <string name="settings_theme_system_default">System default</string>
-    <string name="settings_theme_system_default_description">Automatically follows Android&apos;s dark or light theme</string>
+    <string name="settings_theme_system_default_description">Automatically follows Android\'s dark or light theme</string>
     <string name="settings_theme_fixed_light">Fixed Light</string>
     <string name="settings_theme_fixed_light_description">Always clean and bright, unaffected by system theme</string>
     <string name="settings_theme_fixed_dark">Fixed Dark</string>
@@ -128,7 +128,7 @@
     <string name="export_chooser_title">Export ClipNest history</string>
     <string name="update_checking">Checking for Updates...</string>
     <string name="update_checking_description">Contacting update server to check for new ClipNest releases.</string>
-    <string name="up_to_date">You&apos;re up to date.</string>
+    <string name="up_to_date">You\'re up to date.</string>
     <string name="up_to_date_description">You are running the latest version of ClipNest (v%1$s, Build %2$d).</string>
     <string name="ok">OK</string>
     <string name="update_available">Update Available</string>
@@ -147,7 +147,7 @@
     <string name="verifying_description">Verifying SHA-256 cryptographic checksum to confirm file integrity before installing.</string>
     <string name="ready_install">Ready to Install</string>
     <string name="download_success">ClipNest v%1$s has downloaded successfully and passed security verification.</string>
-    <string name="install_description">Tapping &apos;Install&apos; will open Android&apos;s package installer for your confirmation.</string>
+    <string name="install_description">Tapping \'Install\' will open Android\'s package installer for your confirmation.</string>
     <string name="install">Install</string>
     <string name="update_issue">Update Issue</string>
     <string name="retry_download">Retry Download</string>
@@ -164,7 +164,7 @@
     <string name="privacy_description">Starting in Android 10+, background apps cannot silently inspect your clipboard to protect sensitive passwords. ClipNest reliably captures your clips in 2 ways:</string>
     <string name="privacy_way_1">1. Automatically when you switch back to ClipNest</string>
     <string name="privacy_way_2">2. Highlight text anywhere → Share → ClipNest</string>
-    <string name="privacy_way_3">3. Swipe down Quick Settings → Tap &apos;Capture Clip&apos;</string>
+    <string name="privacy_way_3">3. Swipe down Quick Settings → Tap \'Capture Clip\'</string>
     <string name="understood">Understood</string>
     <string name="search_history_hint">Search clipboard history...</string>
     <string name="search">Search</string>
