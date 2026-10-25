@@ -52,6 +52,11 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.core.content.ContextCompat
 import com.example.data.model.ClipItem
 import com.example.data.preferences.PreferenceManager
 import com.example.data.preferences.AppLockPreferences
@@ -93,6 +98,10 @@ fun ClipNestScreen(
     var isAppLocked by remember { mutableStateOf(appLockPreferences.enabled) }
     var lastUnlockAt by remember { mutableStateOf(System.currentTimeMillis()) }
     var appLockEnabledState by remember { mutableStateOf(appLockPreferences.enabled) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var isActivityResumed by remember {
+        mutableStateOf(lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED))
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -103,11 +112,11 @@ fun ClipNestScreen(
     var showExportDialog by remember { mutableStateOf(false) }
 
     // Lifecycle observer to auto-capture clipboard whenever user switches back to the app
-    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
+                    isActivityResumed = true
                     viewModel.onResumeCheck()
                     if (appLockPreferences.enabled) {
                         val timedOut = appLockPreferences.policy == AppLockPreferences.Policy.AFTER_TIMEOUT &&
@@ -115,7 +124,8 @@ fun ClipNestScreen(
                         if (appLockPreferences.policy == AppLockPreferences.Policy.IMMEDIATELY || timedOut) isAppLocked = true
                     }
                 }
-                Lifecycle.Event.ON_STOP -> if (appLockPreferences.enabled && appLockPreferences.policy != AppLockPreferences.Policy.AFTER_TIMEOUT) isAppLocked = true
+                Lifecycle.Event.ON_PAUSE -> isActivityResumed = false
+                Lifecycle.Event.ON_STOP -> if (appLockPreferences.enabled && appLockPreferences.policy == AppLockPreferences.Policy.ON_APP_CLOSE) isAppLocked = true
                 else -> Unit
             }
         }
@@ -123,6 +133,26 @@ fun ClipNestScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
+    }
+
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(receiverContext: Context, intent: Intent) {
+                if (intent.action == Intent.ACTION_SCREEN_OFF &&
+                    appLockPreferences.enabled &&
+                    appLockPreferences.policy == AppLockPreferences.Policy.ON_SCREEN_OFF
+                ) {
+                    isAppLocked = true
+                }
+            }
+        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(Intent.ACTION_SCREEN_OFF),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+        onDispose { context.unregisterReceiver(receiver) }
     }
 
     // Snackbars
@@ -133,7 +163,7 @@ fun ClipNestScreen(
     }
 
     if (isAppLocked && appLockPreferences.enabled) {
-        AppLockScreen(lockPreferences = appLockPreferences) {
+        AppLockScreen(lockPreferences = appLockPreferences, isActivityResumed = isActivityResumed) {
             isAppLocked = false
             lastUnlockAt = System.currentTimeMillis()
         }

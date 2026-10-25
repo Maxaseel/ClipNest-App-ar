@@ -35,17 +35,20 @@ import com.example.data.preferences.AppLockPreferences
 @Composable
 fun AppLockScreen(
     lockPreferences: AppLockPreferences,
+    isActivityResumed: Boolean,
     onUnlocked: () -> Unit
 ) {
     val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
     var error by remember { mutableStateOf(false) }
+    var showPinFallback by remember { mutableStateOf(lockPreferences.method == AppLockPreferences.Method.PIN) }
     val activity = context as? FragmentActivity
 
     fun showBiometric() {
         if (activity == null) return
         val prompt = BiometricPrompt(activity, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) = onUnlocked()
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) { showPinFallback = true }
             override fun onAuthenticationFailed() { error = true }
         })
         val info = BiometricPrompt.PromptInfo.Builder()
@@ -56,11 +59,12 @@ fun AppLockScreen(
         prompt.authenticate(info)
     }
 
-    LaunchedEffect(lockPreferences.method) {
-        if (lockPreferences.method == AppLockPreferences.Method.BIOMETRIC &&
-            activity != null &&
-            BiometricManager.from(context).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
-        ) showBiometric()
+    LaunchedEffect(lockPreferences.method, isActivityResumed) {
+        if (lockPreferences.method == AppLockPreferences.Method.BIOMETRIC && isActivityResumed) {
+            val canUseBiometric = activity != null &&
+                BiometricManager.from(context).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
+            if (canUseBiometric) showBiometric() else showPinFallback = true
+        }
     }
 
     Column(
@@ -68,14 +72,14 @@ fun AppLockScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(Icons.Default.Fingerprint, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-        Text(stringResource(R.string.lock_title), style = MaterialTheme.typography.headlineSmall)
-        Text(
-            stringResource(if (lockPreferences.method == AppLockPreferences.Method.PIN) R.string.lock_enter_pin else R.string.lock_unlock_to_continue),
-            modifier = Modifier.padding(top = 8.dp, bottom = 20.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        if (lockPreferences.method == AppLockPreferences.Method.PIN || lockPreferences.hasPin) {
+        if (lockPreferences.method == AppLockPreferences.Method.PIN || showPinFallback) {
+            Icon(Icons.Default.Fingerprint, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.lock_title), style = MaterialTheme.typography.headlineSmall)
+            Text(
+                stringResource(if (lockPreferences.method == AppLockPreferences.Method.PIN) R.string.lock_enter_pin else R.string.lock_unlock_to_continue),
+                modifier = Modifier.padding(top = 8.dp, bottom = 20.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             OutlinedTextField(
                 value = pin,
                 onValueChange = { if (it.length <= 32) { pin = it; error = false } },
@@ -91,7 +95,7 @@ fun AppLockScreen(
                 modifier = Modifier.padding(top = 16.dp)
             ) { Text(stringResource(R.string.lock_unlock)) }
         }
-        if (lockPreferences.method == AppLockPreferences.Method.BIOMETRIC) {
+        if (lockPreferences.method == AppLockPreferences.Method.BIOMETRIC && showPinFallback) {
             Button(onClick = ::showBiometric, modifier = Modifier.padding(top = 12.dp)) {
                 Text(stringResource(R.string.lock_try_biometric))
             }
