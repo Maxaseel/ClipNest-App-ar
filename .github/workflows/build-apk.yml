@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   build-apk:
-    name: Build Debug APK
+    name: Build Release APKs
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -34,14 +34,18 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.3.1'
-      - name: Create debug keystore
-        run: keytool -genkeypair -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-      - name: Build Debug APK
-        run: gradle :app:assembleDebug --no-daemon
-      - name: Upload APK artifact
+      - name: Create temporary release keystore
+        run: keytool -genkeypair -v -keystore release.keystore -storepass android -alias upload -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=ClipNest Release,O=ClipNest,C=US"
+      - name: Build optimized Release APKs
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
+          STORE_PASSWORD: android
+          KEY_PASSWORD: android
+        run: gradle :app:assembleRelease --no-daemon
+      - name: Upload optimized APK artifacts
         uses: actions/upload-artifact@v5
         with:
-          name: clipnest-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: clipnest-release-apks
+          path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
           retention-days: 14

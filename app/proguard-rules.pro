@@ -17,5 +17,32 @@
 #-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
-# hide the original source file name.
+# and hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep Room's generated implementation and database annotations discoverable.
+-keep class com.example.data.local.AppDatabase { *; }
+-keep class com.example.data.local.AppDatabase_Impl { *; }
+-keep interface com.example.data.local.ClipDao { *; }
+-keep class com.example.data.model.ClipItem { *; }
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao class * { *; }
+-keep @androidx.room.Database class * { *; }
+
+# Keep Moshi generated adapters and reflective metadata used by JSON models.
+-keep class **JsonAdapter { *; }
+-keep class **JsonAdapter$* { *; }
+-keep @com.squareup.moshi.JsonClass class * { *; }
+-keepclassmembers class * {
+    @com.squareup.moshi.* <fields>;
+}
+
+# Preserve generic signatures and annotations needed by Retrofit/Moshi/Room.
+-keepattributes Signature,*Annotation*,InnerClasses,EnclosingMethod
+
+# Do not retain debug logging in optimized builds.
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+}
