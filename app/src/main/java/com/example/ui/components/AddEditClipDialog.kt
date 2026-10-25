@@ -30,6 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.data.model.ClipItem
@@ -55,7 +57,7 @@ fun AddEditClipDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (initialClip == null) "New Clip" else "Edit Clip",
+                text = if (initialClip == null) stringResource(R.string.add_edit_new_title) else stringResource(R.string.add_edit_edit_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -73,16 +75,16 @@ fun AddEditClipDialog(
                         content = it
                         if (isError && it.isNotBlank()) isError = false
                     },
-                    label = { Text("Clipboard Content *") },
-                    placeholder = { Text("Paste or type text, link, code...") },
+                    label = { Text(stringResource(R.string.clipboard_content_required)) },
+                    placeholder = { Text(stringResource(R.string.clipboard_content_hint)) },
                     minLines = 4,
                     maxLines = 8,
                     isError = isError,
                     supportingText = {
                         if (isError) {
-                            Text("Content cannot be empty", color = MaterialTheme.colorScheme.error)
+                            Text(stringResource(R.string.content_empty_error), color = MaterialTheme.colorScheme.error)
                         } else {
-                            Text("${content.length} characters • ${if (content.isBlank()) 0 else content.trim().split(Regex("\\s+")).size} words")
+                            Text(stringResource(R.string.content_stats, content.length, if (content.isBlank()) 0 else content.trim().split(Regex("\\s+")).size))
                         }
                     },
                     shape = RoundedCornerShape(12.dp),
@@ -97,8 +99,8 @@ fun AddEditClipDialog(
                 OutlinedTextField(
                     value = label,
                     onValueChange = { label = it },
-                    label = { Text("Label / Tag (Optional)") },
-                    placeholder = { Text("e.g. WiFi Password, Docs Link") },
+                    label = { Text(stringResource(R.string.label_optional)) },
+                    placeholder = { Text(stringResource(R.string.label_hint)) },
                     leadingIcon = {
                         Icon(Icons.Default.BookmarkBorder, contentDescription = null)
                     },
@@ -129,7 +131,7 @@ fun AddEditClipDialog(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Auto-detected type: ${detectedType?.type?.name}",
+                                text = stringResource(R.string.auto_detected_type, stringResource(detectedType?.type?.labelRes ?: R.string.content_type_text)),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -150,7 +152,7 @@ fun AddEditClipDialog(
                 },
                 modifier = Modifier.testTag("save_clip_dialog_button")
             ) {
-                Text(if (initialClip == null) "Add to History" else "Update Clip")
+                Text(stringResource(if (initialClip == null) R.string.add_to_history else R.string.update_clip))
             }
         },
         dismissButton = {
@@ -158,7 +160,7 @@ fun AddEditClipDialog(
                 onClick = onDismiss,
                 modifier = Modifier.testTag("cancel_clip_dialog_button")
             ) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         },
         shape = RoundedCornerShape(24.dp)

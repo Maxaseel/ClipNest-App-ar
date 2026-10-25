@@ -5,6 +5,8 @@ import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.annotation.StringRes
+import com.example.R
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.AppDatabase
@@ -29,21 +31,21 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-enum class ClipFilterCategory(val displayName: String) {
-    ALL("All"),
-    PINNED("Starred"),
-    URLS("Links"),
-    CODE("Code & JSON"),
-    COLORS("Colors"),
-    CONTACTS("Contacts"),
-    TEXT("Text")
+enum class ClipFilterCategory(@StringRes val displayNameRes: Int) {
+    ALL(R.string.filter_all),
+    PINNED(R.string.filter_pinned),
+    URLS(R.string.filter_urls),
+    CODE(R.string.filter_code),
+    COLORS(R.string.filter_colors),
+    CONTACTS(R.string.filter_contacts),
+    TEXT(R.string.filter_text)
 }
 
-enum class SortOption(val displayName: String) {
-    RECENT("Most Recent"),
-    OLDEST("Oldest First"),
-    MOST_COPIED("Most Copied"),
-    ALPHABETICAL("A to Z")
+enum class SortOption(@StringRes val displayNameRes: Int) {
+    RECENT(R.string.sort_recent),
+    OLDEST(R.string.sort_oldest),
+    MOST_COPIED(R.string.sort_copied),
+    ALPHABETICAL(R.string.sort_alphabetical)
 }
 
 data class ClipUiStats(
@@ -223,7 +225,7 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 if (!clipboardManager.hasPrimaryClip()) {
-                    if (!silent && !fromListener) _eventFlow.emit("Clipboard is currently empty")
+                    if (!silent && !fromListener) _eventFlow.emit(getApplication<Application>().getString(R.string.event_clipboard_empty))
                     return@launch
                 }
 
@@ -234,25 +236,25 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
                     if (!text.isNullOrBlank()) {
                         when (repository.saveOrUpdateClip(text)) {
                             SaveResult.NEW -> {
-                                _eventFlow.emit("Auto-captured from clipboard!")
+                                _eventFlow.emit(getApplication<Application>().getString(R.string.event_auto_captured))
                             }
                             SaveResult.UPDATED_EXISTING -> {
                                 if (!silent && !fromListener) {
-                                    _eventFlow.emit("Clipboard item already saved (usage updated)")
+                                    _eventFlow.emit(getApplication<Application>().getString(R.string.event_clipboard_already_saved))
                                 }
                             }
                             SaveResult.EMPTY_IGNORED -> {
                                 if (!silent && !fromListener) {
-                                    _eventFlow.emit("Clipboard content is empty")
+                                    _eventFlow.emit(getApplication<Application>().getString(R.string.event_clipboard_content_empty))
                                 }
                             }
                         }
                     } else if (!silent && !fromListener) {
-                        _eventFlow.emit("No text found in clipboard")
+                        _eventFlow.emit(getApplication<Application>().getString(R.string.event_clipboard_no_text))
                     }
                 }
             } catch (e: Exception) {
-                if (!silent && !fromListener) _eventFlow.emit("Could not read clipboard: ${e.message}")
+                if (!silent && !fromListener) _eventFlow.emit(getApplication<Application>().getString(R.string.event_clipboard_read_failed, e.message.orEmpty()))
             }
         }
     }
@@ -260,11 +262,11 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
     fun handleSharedText(sharedText: String) {
         viewModelScope.launch {
             if (sharedText.isNotBlank()) {
-                val result = repository.saveOrUpdateClip(sharedText, "Shared to ClipNest")
+                val result = repository.saveOrUpdateClip(sharedText, getApplication<Application>().getString(R.string.shared_clip_label))
                 if (result == SaveResult.NEW) {
-                    _eventFlow.emit("Saved to ClipNest via Share!")
+                    _eventFlow.emit(getApplication<Application>().getString(R.string.event_shared_saved))
                 } else {
-                    _eventFlow.emit("Updated existing clip from Share")
+                    _eventFlow.emit(getApplication<Application>().getString(R.string.event_shared_updated))
                 }
             }
         }
@@ -273,12 +275,12 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
     fun copyClipToClipboard(clip: ClipItem) {
         viewModelScope.launch {
             try {
-                val clipData = ClipData.newPlainText("ClipNest Item", clip.content)
+                val clipData = ClipData.newPlainText(getApplication<Application>().getString(R.string.clipboard_label), clip.content)
                 clipboardManager.setPrimaryClip(clipData)
                 repository.markUsed(clip.id)
-                _eventFlow.emit("Copied to clipboard!")
+                _eventFlow.emit(getApplication<Application>().getString(R.string.event_copied))
             } catch (e: Exception) {
-                _eventFlow.emit("Failed to copy: ${e.message}")
+                _eventFlow.emit(getApplication<Application>().getString(R.string.event_copy_failed, e.message.orEmpty()))
             }
         }
     }
@@ -286,7 +288,7 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
     fun togglePin(clip: ClipItem) {
         viewModelScope.launch {
             repository.togglePin(clip.id, clip.isPinned)
-            val message = if (!clip.isPinned) "Clip starred & protected from cleanup" else "Clip unstarred"
+            val message = if (!clip.isPinned) getApplication<Application>().getString(R.string.event_clip_starred) else getApplication<Application>().getString(R.string.event_clip_unstarred)
             _eventFlow.emit(message)
         }
     }
@@ -295,9 +297,9 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val result = repository.saveOrUpdateClip(content, label)
             when (result) {
-                SaveResult.NEW -> _eventFlow.emit("Clip added successfully")
-                SaveResult.UPDATED_EXISTING -> _eventFlow.emit("Existing clip updated")
-                SaveResult.EMPTY_IGNORED -> _eventFlow.emit("Clip cannot be empty")
+                SaveResult.NEW -> _eventFlow.emit(getApplication<Application>().getString(R.string.event_clip_added))
+                SaveResult.UPDATED_EXISTING -> _eventFlow.emit(getApplication<Application>().getString(R.string.event_clip_existing_updated))
+                SaveResult.EMPTY_IGNORED -> _eventFlow.emit(getApplication<Application>().getString(R.string.event_clip_empty))
             }
         }
     }
@@ -305,21 +307,21 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
     fun updateClip(clipId: Long, content: String, label: String?) {
         viewModelScope.launch {
             repository.updateClip(clipId, content, label)
-            _eventFlow.emit("Clip updated")
+            _eventFlow.emit(getApplication<Application>().getString(R.string.event_clip_updated))
         }
     }
 
     fun deleteClip(clip: ClipItem) {
         viewModelScope.launch {
             repository.deleteClip(clip)
-            _eventFlow.emit("Clip deleted")
+            _eventFlow.emit(getApplication<Application>().getString(R.string.event_clip_deleted))
         }
     }
 
     fun clearHistory(keepPinned: Boolean) {
         viewModelScope.launch {
             repository.clearHistory(keepPinned)
-            val msg = if (keepPinned) "Cleared unstarred clips" else "Cleared all clipboard history"
+            val msg = if (keepPinned) getApplication<Application>().getString(R.string.event_cleared_unstarred) else getApplication<Application>().getString(R.string.event_cleared_all)
             _eventFlow.emit(msg)
         }
     }
@@ -330,9 +332,9 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val deleted = repository.cleanExpiredClips()
             if (deleted > 0) {
-                _eventFlow.emit("Purged $deleted expired clips")
+                _eventFlow.emit(getApplication<Application>().getString(R.string.event_purged_expired, deleted))
             } else {
-                _eventFlow.emit("Retention policy updated")
+                _eventFlow.emit(getApplication<Application>().getString(R.string.event_retention_updated))
             }
         }
     }
@@ -341,9 +343,9 @@ class ClipViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val count = repository.cleanExpiredClips()
             if (count > 0) {
-                _eventFlow.emit("Removed $count expired clips")
+                _eventFlow.emit(getApplication<Application>().getString(R.string.event_removed_expired, count))
             } else {
-                _eventFlow.emit("No expired clips found to clean")
+                _eventFlow.emit(getApplication<Application>().getString(R.string.event_no_expired))
             }
         }
     }

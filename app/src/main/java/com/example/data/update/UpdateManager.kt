@@ -69,11 +69,11 @@ class UpdateManager(private val context: Context) {
                 @Suppress("DEPRECATION")
                 packageInfo.versionCode
             }
-            currentVersionName = packageInfo.versionName ?: "1.0"
+            currentVersionName = packageInfo.versionName ?: context.getString(com.example.R.string.default_version_name)
         } catch (e: Exception) {
             if (isManual) {
                 withContext(Dispatchers.Main) {
-                    onStateChange(UpdateUiState.Error("Failed to inspect installed app version: ${e.message}"))
+                    onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_inspect_version, e.message)))
                 }
             }
             return@withContext
@@ -89,7 +89,7 @@ class UpdateManager(private val context: Context) {
             if (!response.isSuccessful) {
                 if (isManual) {
                     withContext(Dispatchers.Main) {
-                        onStateChange(UpdateUiState.Error("Update check failed with server status ${response.code}"))
+                        onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_server_status, response.code)))
                     }
                 }
                 return@withContext
@@ -99,7 +99,7 @@ class UpdateManager(private val context: Context) {
             if (body.isNullOrBlank()) {
                 if (isManual) {
                     withContext(Dispatchers.Main) {
-                        onStateChange(UpdateUiState.Error("Received empty update payload from server."))
+                        onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_empty_payload)))
                     }
                 }
                 return@withContext
@@ -108,7 +108,7 @@ class UpdateManager(private val context: Context) {
             val json = JSONObject(body)
             val remoteVersionCode = json.optInt("versionCode", -1)
             val remoteVersionName = json.optString("versionName", "")
-            val releaseNotes = json.optString("releaseNotes", "Bug fixes and performance improvements")
+            val releaseNotes = json.optString("releaseNotes", context.getString(com.example.R.string.default_release_notes))
             val apkUrl = json.optString("apkUrl", "")
             val sha256 = if (json.has("sha256") && !json.isNull("sha256")) {
                 json.getString("sha256").trim().ifBlank { null }
@@ -119,7 +119,7 @@ class UpdateManager(private val context: Context) {
             if (remoteVersionCode <= 0 || apkUrl.isBlank()) {
                 if (isManual) {
                     withContext(Dispatchers.Main) {
-                        onStateChange(UpdateUiState.Error("Invalid update metadata received from server."))
+                        onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_invalid_metadata)))
                     }
                 }
                 return@withContext
@@ -158,9 +158,14 @@ class UpdateManager(private val context: Context) {
         } catch (e: Exception) {
             if (isManual) {
                 withContext(Dispatchers.Main) {
-                    onStateChange(
-                        UpdateUiState.Error("Unable to connect to update server: ${e.localizedMessage ?: "Network error"}")
-                    )
+                        onStateChange(
+                            UpdateUiState.Error(
+                                context.getString(
+                                    com.example.R.string.update_error_connection,
+                                    e.localizedMessage ?: context.getString(com.example.R.string.network_error)
+                                )
+                            )
+                        )
                 }
             }
         }
@@ -175,13 +180,13 @@ class UpdateManager(private val context: Context) {
 
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
         if (downloadManager == null) {
-            onStateChange(UpdateUiState.Error("DownloadManager is not available on this device", canRetry = false))
+            onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_download_manager_unavailable), canRetry = false))
             return
         }
 
         val downloadsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
         if (downloadsDir == null) {
-            onStateChange(UpdateUiState.Error("Storage directory is not accessible", canRetry = false))
+            onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_storage_unavailable), canRetry = false))
             return
         }
 
@@ -200,8 +205,8 @@ class UpdateManager(private val context: Context) {
         try {
             val uri = Uri.parse(info.apkUrl)
             val request = DownloadManager.Request(uri).apply {
-                setTitle("ClipNest ${info.versionName}")
-                setDescription("Downloading ClipNest update package...")
+                setTitle(context.getString(com.example.R.string.download_notification_title, info.versionName))
+                setDescription(context.getString(com.example.R.string.download_notification_description))
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 setMimeType("application/vnd.android.package-archive")
                 setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, fileName)
@@ -225,7 +230,7 @@ class UpdateManager(private val context: Context) {
                 trackDownloadProgress(downloadManager, downloadId, info, destinationFile, onStateChange)
             }
         } catch (e: Exception) {
-            onStateChange(UpdateUiState.Error("Failed to start download: ${e.message}", canRetry = true, info = info))
+            onStateChange(UpdateUiState.Error(context.getString(com.example.R.string.update_error_start_download, e.message), canRetry = true, info = info))
         }
     }
 
@@ -287,7 +292,7 @@ class UpdateManager(private val context: Context) {
                                 destinationFile.delete()
                                 onStateChange(
                                     UpdateUiState.Error(
-                                        message = "Checksum verification failed! The downloaded APK does not match the expected SHA-256 fingerprint and was rejected for your security.",
+                                        message = context.getString(com.example.R.string.update_error_checksum),
                                         canRetry = false,
                                         info = info
                                     )
@@ -309,7 +314,7 @@ class UpdateManager(private val context: Context) {
                                 } catch (e: Exception) {
                                     onStateChange(
                                         UpdateUiState.Error(
-                                            message = "Failed to prepare APK file for installation: ${e.message}",
+                                            message = context.getString(com.example.R.string.update_error_prepare_apk, e.message),
                                             canRetry = true,
                                             info = info
                                         )
@@ -323,7 +328,7 @@ class UpdateManager(private val context: Context) {
                         withContext(Dispatchers.Main) {
                             onStateChange(
                                 UpdateUiState.Error(
-                                    message = "Download was unsuccessful or interrupted. Please try again.",
+                                    message = context.getString(com.example.R.string.update_error_download_failed),
                                     canRetry = true,
                                     info = info
                                 )

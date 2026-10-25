@@ -40,7 +40,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,6 +62,7 @@ fun InAppUpdateDialog(
     onInstall: (File) -> Unit,
     onRetryDownload: (UpdateInfo) -> Unit
 ) {
+    val resources = LocalContext.current.resources
     when (updateState) {
         UpdateUiState.Idle -> {
             // Nothing to show
@@ -75,7 +79,7 @@ fun InAppUpdateDialog(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Checking for Updates...",
+                            text = stringResource(R.string.update_checking),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -83,7 +87,7 @@ fun InAppUpdateDialog(
                 },
                 text = {
                     Text(
-                        text = "Contacting update server to check for new ClipNest releases.",
+                        text = stringResource(R.string.update_checking_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -93,7 +97,7 @@ fun InAppUpdateDialog(
                         onClick = onDismiss,
                         modifier = Modifier.testTag("cancel_checking_button")
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -121,7 +125,7 @@ fun InAppUpdateDialog(
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "You're up to date.",
+                            text = stringResource(R.string.up_to_date),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -130,7 +134,7 @@ fun InAppUpdateDialog(
                 text = {
                     Column {
                         Text(
-                            text = "You are running the latest version of ClipNest (v${updateState.currentVersionName}, Build ${updateState.currentVersionCode}).",
+                            text = stringResource(R.string.up_to_date_description, updateState.currentVersionName, updateState.currentVersionCode),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -141,7 +145,7 @@ fun InAppUpdateDialog(
                         onClick = onDismiss,
                         modifier = Modifier.testTag("up_to_date_ok_button")
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok))
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -171,12 +175,12 @@ fun InAppUpdateDialog(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Update Available",
+                                text = stringResource(R.string.update_available),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "v${info.versionName} is ready to download",
+                                text = stringResource(R.string.update_ready_download, info.versionName),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -202,12 +206,12 @@ fun InAppUpdateDialog(
                             ) {
                                 Column {
                                     Text(
-                                        text = "Installed",
+                                        text = stringResource(R.string.installed),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Text(
-                                        text = "v${updateState.currentVersionName} (${updateState.currentVersionCode})",
+                                        text = stringResource(R.string.version_code, updateState.currentVersionName, updateState.currentVersionCode),
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold
                                     )
@@ -215,12 +219,12 @@ fun InAppUpdateDialog(
                                 Text("➔", color = MaterialTheme.colorScheme.primary)
                                 Column(horizontalAlignment = Alignment.End) {
                                     Text(
-                                        text = "New Version",
+                                        text = stringResource(R.string.new_version),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                     Text(
-                                        text = "v${info.versionName} (${info.versionCode})",
+                                        text = stringResource(R.string.version_code, info.versionName, info.versionCode),
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary
@@ -232,7 +236,7 @@ fun InAppUpdateDialog(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = "Release Notes",
+                            text = stringResource(R.string.release_notes),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -271,7 +275,7 @@ fun InAppUpdateDialog(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "Secured with SHA-256 Checksum",
+                                    text = stringResource(R.string.sha_checksum),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.secondary,
                                     fontWeight = FontWeight.Medium
@@ -291,7 +295,7 @@ fun InAppUpdateDialog(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Update Now")
+                        Text(stringResource(R.string.update_now))
                     }
                 },
                 dismissButton = {
@@ -299,7 +303,7 @@ fun InAppUpdateDialog(
                         onClick = onDismiss,
                         modifier = Modifier.testTag("later_update_button")
                     ) {
-                        Text("Later")
+                        Text(stringResource(R.string.later))
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -318,7 +322,7 @@ fun InAppUpdateDialog(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Downloading Update",
+                            text = stringResource(R.string.downloading_update),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -327,7 +331,7 @@ fun InAppUpdateDialog(
                 text = {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "ClipNest v${info.versionName} is downloading via Android DownloadManager.",
+                            text = stringResource(R.string.downloading_description, info.versionName),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -350,14 +354,14 @@ fun InAppUpdateDialog(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "${updateState.progressPercent}%",
+                                text = stringResource(R.string.progress_percent, updateState.progressPercent),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             if (updateState.totalBytes > 0) {
                                 Text(
-                                    text = "${formatBytes(updateState.downloadedBytes)} / ${formatBytes(updateState.totalBytes)}",
+                                    text = "${formatBytes(resources, updateState.downloadedBytes)} / ${formatBytes(resources, updateState.totalBytes)}",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -370,7 +374,7 @@ fun InAppUpdateDialog(
                         onClick = onCancelDownload,
                         modifier = Modifier.testTag("cancel_download_button")
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -388,7 +392,7 @@ fun InAppUpdateDialog(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Verifying Package...",
+                            text = stringResource(R.string.verifying_package),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -396,7 +400,7 @@ fun InAppUpdateDialog(
                 },
                 text = {
                     Text(
-                        text = "Verifying SHA-256 cryptographic checksum to confirm file integrity before installing.",
+                        text = stringResource(R.string.verifying_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -428,7 +432,7 @@ fun InAppUpdateDialog(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Ready to Install",
+                            text = stringResource(R.string.ready_install),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -437,13 +441,13 @@ fun InAppUpdateDialog(
                 text = {
                     Column {
                         Text(
-                            text = "ClipNest v${info.versionName} has downloaded successfully and passed security verification.",
+                            text = stringResource(R.string.download_success, info.versionName),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Tapping 'Install' will open Android's package installer for your confirmation.",
+                            text = stringResource(R.string.install_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                         )
@@ -454,7 +458,7 @@ fun InAppUpdateDialog(
                         onClick = { onInstall(updateState.apkFile) },
                         modifier = Modifier.testTag("install_update_button")
                     ) {
-                        Text("Install")
+                        Text(stringResource(R.string.install))
                     }
                 },
                 dismissButton = {
@@ -462,7 +466,7 @@ fun InAppUpdateDialog(
                         onClick = onDismiss,
                         modifier = Modifier.testTag("later_install_button")
                     ) {
-                        Text("Later")
+                        Text(stringResource(R.string.later))
                     }
                 },
                 shape = RoundedCornerShape(24.dp)
@@ -482,7 +486,7 @@ fun InAppUpdateDialog(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Update Issue",
+                            text = stringResource(R.string.update_issue),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -503,14 +507,14 @@ fun InAppUpdateDialog(
                         ) {
                             Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Retry Download")
+                            Text(stringResource(R.string.retry_download))
                         }
                     } else {
                         Button(
                             onClick = onDismiss,
                             modifier = Modifier.testTag("close_error_button")
                         ) {
-                            Text("Close")
+                            Text(stringResource(R.string.close))
                         }
                     }
                 },
@@ -520,7 +524,7 @@ fun InAppUpdateDialog(
                             onClick = onDismiss,
                             modifier = Modifier.testTag("cancel_retry_button")
                         ) {
-                            Text("Dismiss")
+                            Text(stringResource(R.string.dismiss))
                         }
                     }
                 },
@@ -530,16 +534,16 @@ fun InAppUpdateDialog(
     }
 }
 
-private fun formatBytes(bytes: Long): String {
-    if (bytes <= 0) return "0 B"
+private fun formatBytes(resources: android.content.res.Resources, bytes: Long): String {
+    if (bytes <= 0) return resources.getString(R.string.bytes_b, 0)
     val kb = bytes / 1024.0
     val mb = kb / 1024.0
     val gb = mb / 1024.0
 
     return when {
-        gb >= 1.0 -> String.format(Locale.US, "%.1f GB", gb)
-        mb >= 1.0 -> String.format(Locale.US, "%.1f MB", mb)
-        kb >= 1.0 -> String.format(Locale.US, "%.0f KB", kb)
-        else -> "$bytes B"
+        gb >= 1.0 -> resources.getString(R.string.bytes_gb, gb)
+        mb >= 1.0 -> resources.getString(R.string.bytes_mb, mb)
+        kb >= 1.0 -> resources.getString(R.string.bytes_kb, kb)
+        else -> resources.getString(R.string.bytes_b, bytes)
     }
 }

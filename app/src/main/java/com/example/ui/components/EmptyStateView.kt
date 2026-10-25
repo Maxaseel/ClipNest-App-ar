@@ -33,6 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -81,7 +83,7 @@ fun EmptyStateView(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = if (hasFilterActive) "No matching clips found" else "Clipboard History is Clean",
+                text = stringResource(if (hasFilterActive) R.string.empty_no_match else R.string.empty_clean_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -92,9 +94,9 @@ fun EmptyStateView(
 
             Text(
                 text = if (hasFilterActive) {
-                    "No items match your active search or category filter. Try clearing your search."
+                    stringResource(R.string.empty_filter_description)
                 } else {
-                    "Automatic clipboard capture is active! Any text, link, code snippet, or color you copy will automatically be saved to ClipNest."
+                    stringResource(R.string.empty_clean_description)
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -123,7 +125,7 @@ fun EmptyStateView(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Auto-Capture: Copy anywhere and return here",
+                                text = stringResource(R.string.auto_capture_guide),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -139,7 +141,7 @@ fun EmptyStateView(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Quick Share: Highlight text → Share → ClipNest",
+                                text = stringResource(R.string.quick_share_guide),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -156,7 +158,7 @@ fun EmptyStateView(
                     onClick = onResetFilter,
                     modifier = Modifier.testTag("reset_filters_button")
                 ) {
-                    Text("Clear Filters & Search")
+                    Text(stringResource(R.string.clear_filters_search))
                 }
             } else {
                 Row(
@@ -173,7 +175,7 @@ fun EmptyStateView(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Check Clipboard Now")
+                        Text(stringResource(R.string.check_clipboard_now))
                     }
 
                     FilledTonalButton(
@@ -186,7 +188,7 @@ fun EmptyStateView(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("New Clip")
+                        Text(stringResource(R.string.new_clip))
                     }
                 }
             }

@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,7 +77,7 @@ fun PrivacyBanner(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Security,
-                            contentDescription = "Privacy Shield",
+                            contentDescription = stringResource(R.string.privacy_shield),
                             tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -83,13 +85,13 @@ fun PrivacyBanner(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Android Privacy & Clipboard Capture",
+                            text = stringResource(R.string.privacy_title),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         Text(
-                            text = "Strict background privacy respected",
+                            text = stringResource(R.string.privacy_subtitle),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.75f)
                         )
@@ -102,7 +104,7 @@ fun PrivacyBanner(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Dismiss notice",
+                            contentDescription = stringResource(R.string.dismiss_notice),
                             tint = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
                             modifier = Modifier.size(18.dp)
                         )
@@ -112,7 +114,7 @@ fun PrivacyBanner(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "Starting in Android 10+, background apps cannot silently inspect your clipboard to protect sensitive passwords. ClipNest reliably captures your clips in 2 ways:",
+                    text = stringResource(R.string.privacy_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     lineHeight = 18.sp
@@ -132,7 +134,7 @@ fun PrivacyBanner(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "1. Automatically when you switch back to ClipNest",
+                        text = stringResource(R.string.privacy_way_1),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -151,7 +153,7 @@ fun PrivacyBanner(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "2. Highlight text anywhere → Share → ClipNest",
+                        text = stringResource(R.string.privacy_way_2),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -170,7 +172,7 @@ fun PrivacyBanner(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "3. Swipe down Quick Settings → Tap 'Capture Clip'",
+                        text = stringResource(R.string.privacy_way_3),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -187,7 +189,7 @@ fun PrivacyBanner(
                         onClick = onDismiss,
                         modifier = Modifier.testTag("privacy_banner_got_it")
                     ) {
-                        Text("Understood", fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.understood), fontWeight = FontWeight.SemiBold)
                     }
                 }
             }

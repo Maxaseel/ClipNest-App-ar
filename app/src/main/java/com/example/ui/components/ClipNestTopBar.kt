@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,7 +57,7 @@ fun ClipNestTopBar(
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_clipnest),
-                        contentDescription = "ClipNest Logo",
+                        contentDescription = stringResource(R.string.clipnest_logo),
                         modifier = Modifier
                             .padding(4.dp)
                             .clip(RoundedCornerShape(8.dp))
@@ -66,7 +67,7 @@ fun ClipNestTopBar(
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "ClipNest",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -76,11 +77,11 @@ fun ClipNestTopBar(
 
                 // Retention policy pill
                 val retentionLabel = when (retentionDays) {
-                    PreferenceManager.RETENTION_NEVER -> "Never"
-                    1 -> "1d"
-                    7 -> "7d"
-                    30 -> "30d"
-                    else -> "${retentionDays}d"
+                    PreferenceManager.RETENTION_NEVER -> stringResource(R.string.retention_never)
+                    1 -> stringResource(R.string.retention_days, 1)
+                    7 -> stringResource(R.string.retention_days, 7)
+                    30 -> stringResource(R.string.retention_days, 30)
+                    else -> stringResource(R.string.retention_days, retentionDays)
                 }
                 Surface(
                     shape = CircleShape,
@@ -88,7 +89,7 @@ fun ClipNestTopBar(
                     modifier = Modifier.height(22.dp)
                 ) {
                     Text(
-                        text = "$totalClips • $retentionLabel",
+                        text = stringResource(R.string.clip_count_retention, totalClips, retentionLabel),
                         style = MaterialTheme.typography.labelSmall,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
@@ -108,7 +109,7 @@ fun ClipNestTopBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Sync,
-                    contentDescription = "Sync clipboard now",
+                    contentDescription = stringResource(R.string.sync_clipboard_now),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -125,7 +126,7 @@ fun ClipNestTopBar(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Share,
-                    contentDescription = "Export clipboard history",
+                    contentDescription = stringResource(R.string.export_clipboard_history),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
@@ -140,7 +141,7 @@ fun ClipNestTopBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
-                    contentDescription = "Retention and app settings",
+                    contentDescription = stringResource(R.string.retention_app_settings),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )

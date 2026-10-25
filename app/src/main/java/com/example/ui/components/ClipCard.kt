@@ -60,6 +60,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -145,7 +147,7 @@ fun ClipCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = clip.contentType,
+                            text = stringResource(contentTypeLabelRes(clip.contentType)),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = badgeColor
@@ -213,7 +215,7 @@ fun ClipCard(
                 ) {
                     Icon(
                         imageVector = if (clip.isPinned) Icons.Default.Star else Icons.Outlined.StarOutline,
-                        contentDescription = if (clip.isPinned) "Unstar clip" else "Star clip",
+                        contentDescription = stringResource(if (clip.isPinned) R.string.clip_unstar else R.string.clip_star),
                         tint = if (clip.isPinned) StarGold else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier.size(20.dp)
                     )
@@ -229,7 +231,7 @@ fun ClipCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Clip options",
+                            contentDescription = stringResource(R.string.clip_options),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp)
                         )
@@ -240,7 +242,7 @@ fun ClipCard(
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Edit Clip / Label") },
+                            text = { Text(stringResource(R.string.edit_clip_label)) },
                             leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
                             onClick = {
                                 showMenu = false
@@ -248,7 +250,7 @@ fun ClipCard(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Share Text") },
+                            text = { Text(stringResource(R.string.share_text)) },
                             leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
                             onClick = {
                                 showMenu = false
@@ -256,7 +258,7 @@ fun ClipCard(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Delete Clip", color = MaterialTheme.colorScheme.error) },
+                            text = { Text(stringResource(R.string.delete_clip), color = MaterialTheme.colorScheme.error) },
                             leadingIcon = {
                                 Icon(
                                     Icons.Default.DeleteOutline,
@@ -290,7 +292,7 @@ fun ClipCard(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Hex Color Preview",
+                        text = stringResource(R.string.hex_color_preview),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -313,7 +315,7 @@ fun ClipCard(
 
             if (isLongText) {
                 Text(
-                    text = if (isExpanded) "Show less" else "Show more (${clip.charCount} chars)",
+                    text = if (isExpanded) stringResource(R.string.show_less) else stringResource(R.string.show_more_chars, clip.charCount),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
@@ -358,7 +360,7 @@ fun ClipCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.OpenInNew,
-                                    contentDescription = "Open URL in Browser",
+                                    contentDescription = stringResource(R.string.open_url_browser),
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -373,7 +375,7 @@ fun ClipCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Phone,
-                                    contentDescription = "Dial phone number",
+                                    contentDescription = stringResource(R.string.dial_phone),
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -388,7 +390,7 @@ fun ClipCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Email,
-                                    contentDescription = "Send Email",
+                                    contentDescription = stringResource(R.string.send_email),
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -415,7 +417,7 @@ fun ClipCard(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Copy",
+                            text = stringResource(R.string.copy),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -468,7 +470,7 @@ private fun openUrl(context: Context, url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(target))
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "Unable to open link", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.unable_open_link), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -477,7 +479,7 @@ private fun dialPhone(context: Context, phone: String) {
         val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${phone.trim()}"))
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "Unable to open dialer", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.unable_open_dialer), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -486,7 +488,7 @@ private fun sendEmail(context: Context, email: String) {
         val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:${email.trim()}"))
         context.startActivity(intent)
     } catch (e: Exception) {
-        Toast.makeText(context, "Unable to open email client", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.unable_open_email), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -497,9 +499,20 @@ private fun shareClip(context: Context, content: String) {
             putExtra(Intent.EXTRA_TEXT, content)
             type = "text/plain"
         }
-        val shareIntent = Intent.createChooser(sendIntent, "Share clip via")
+        val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.share_clip_via))
         context.startActivity(shareIntent)
     } catch (e: Exception) {
-        Toast.makeText(context, "Unable to share text", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, context.getString(R.string.unable_share_text), Toast.LENGTH_SHORT).show()
     }
+}
+
+private fun contentTypeLabelRes(type: String): Int = when (type) {
+    ContentType.TEXT.name -> R.string.content_type_text
+    ContentType.URL.name -> R.string.content_type_url
+    ContentType.EMAIL.name -> R.string.content_type_email
+    ContentType.PHONE.name -> R.string.content_type_phone
+    ContentType.HEX_COLOR.name -> R.string.content_type_color
+    ContentType.CODE.name -> R.string.content_type_code
+    ContentType.JSON.name -> R.string.content_type_json
+    else -> R.string.content_type_text
 }

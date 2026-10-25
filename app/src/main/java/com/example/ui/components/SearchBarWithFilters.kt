@@ -45,6 +45,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.ui.viewmodel.ClipFilterCategory
@@ -75,11 +77,11 @@ fun SearchBarWithFilters(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
-                placeholder = { Text("Search clipboard history...") },
+                placeholder = { Text(stringResource(R.string.search_history_hint)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
+                        contentDescription = stringResource(R.string.search),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
@@ -91,7 +93,7 @@ fun SearchBarWithFilters(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear search query"
+                                contentDescription = stringResource(R.string.clear_search)
                             )
                         }
                     }
@@ -122,7 +124,7 @@ fun SearchBarWithFilters(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Sort,
-                        contentDescription = "Sort Clips (${currentSort.displayName})",
+                        contentDescription = stringResource(R.string.sort_clips, localizedSortName(currentSort)),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -135,7 +137,7 @@ fun SearchBarWithFilters(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    text = option.displayName,
+                                    text = localizedSortName(option),
                                     fontWeight = if (option == currentSort) FontWeight.Bold else FontWeight.Normal,
                                     color = if (option == currentSort) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                                 )
@@ -167,7 +169,7 @@ fun SearchBarWithFilters(
                     onClick = { onFilterSelect(category) },
                     label = {
                         Text(
-                            text = category.displayName,
+                            text = localizedCategoryName(category),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                         )
@@ -203,3 +205,10 @@ private fun getCategoryIcon(category: ClipFilterCategory): ImageVector {
         ClipFilterCategory.TEXT -> Icons.Default.TextFields
     }
 }
+
+
+@Composable
+private fun localizedCategoryName(category: ClipFilterCategory): String = stringResource(category.displayNameRes)
+
+@Composable
+private fun localizedSortName(option: SortOption): String = stringResource(option.displayNameRes)

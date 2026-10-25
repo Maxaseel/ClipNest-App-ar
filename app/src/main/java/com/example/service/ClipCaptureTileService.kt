@@ -21,9 +21,9 @@ class ClipCaptureTileService : TileService() {
         super.onStartListening()
         qsTile?.apply {
             state = Tile.STATE_ACTIVE
-            label = "Save Clip"
+            label = getString(com.example.R.string.quick_tile_save_clip)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                subtitle = "ClipNest"
+                subtitle = getString(com.example.R.string.quick_tile_subtitle)
             }
             updateTile()
         }
@@ -34,7 +34,7 @@ class ClipCaptureTileService : TileService() {
 
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         if (!clipboard.hasPrimaryClip()) {
-            Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(com.example.R.string.clipboard_empty), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -47,27 +47,27 @@ class ClipCaptureTileService : TileService() {
                 val repo = ClipRepository(db.clipDao(), pref)
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val result = repo.saveOrUpdateClip(text, "Captured via Quick Tile")
+                    val result = repo.saveOrUpdateClip(text, getString(com.example.R.string.captured_via_quick_tile))
                     withContext(Dispatchers.Main) {
                         when (result) {
                             SaveResult.NEW -> {
                                 Toast.makeText(
                                     this@ClipCaptureTileService,
-                                    "Saved to ClipNest!",
+                                    getString(com.example.R.string.clip_saved),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                             SaveResult.UPDATED_EXISTING -> {
                                 Toast.makeText(
                                     this@ClipCaptureTileService,
-                                    "Clip updated in ClipNest",
+                                    getString(com.example.R.string.clip_updated),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
                             SaveResult.EMPTY_IGNORED -> {
                                 Toast.makeText(
                                     this@ClipCaptureTileService,
-                                    "Clipboard is empty",
+                                    getString(com.example.R.string.clipboard_empty),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -75,7 +75,7 @@ class ClipCaptureTileService : TileService() {
                     }
                 }
             } else {
-                Toast.makeText(this, "Clipboard has no readable text", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(com.example.R.string.clipboard_no_readable_text), Toast.LENGTH_SHORT).show()
             }
         }
     }

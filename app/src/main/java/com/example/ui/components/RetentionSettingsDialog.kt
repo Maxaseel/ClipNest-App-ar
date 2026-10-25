@@ -126,7 +126,7 @@ fun RetentionSettingsDialog(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "ClipNest Settings",
+                    text = stringResource(R.string.settings_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -140,13 +140,13 @@ fun RetentionSettingsDialog(
             ) {
                 // Section 1: Theme & Appearance
                 Text(
-                    text = "Theme & Appearance",
+                    text = stringResource(R.string.settings_theme_appearance),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Select your preferred visual style and color behavior.",
+                    text = stringResource(R.string.settings_theme_appearance_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -155,8 +155,8 @@ fun RetentionSettingsDialog(
 
                 // Theme Mode: System default
                 ThemeOptionRow(
-                    label = "System default",
-                    subtitle = "Automatically follows Android's dark or light theme",
+                    label = stringResource(R.string.settings_theme_system_default),
+                    subtitle = stringResource(R.string.settings_theme_system_default_description),
                     icon = Icons.Default.SettingsBrightness,
                     selected = selectedTheme == AppThemeMode.SYSTEM,
                     onSelect = {
@@ -168,8 +168,8 @@ fun RetentionSettingsDialog(
 
                 // Theme Mode: Fixed Light
                 ThemeOptionRow(
-                    label = "Fixed Light",
-                    subtitle = "Always clean and bright, unaffected by system theme",
+                    label = stringResource(R.string.settings_theme_fixed_light),
+                    subtitle = stringResource(R.string.settings_theme_fixed_light_description),
                     icon = Icons.Default.LightMode,
                     selected = selectedTheme == AppThemeMode.LIGHT,
                     onSelect = {
@@ -181,8 +181,8 @@ fun RetentionSettingsDialog(
 
                 // Theme Mode: Fixed Dark
                 ThemeOptionRow(
-                    label = "Fixed Dark",
-                    subtitle = "Always dark and battery-friendly, unaffected by system theme",
+                    label = stringResource(R.string.settings_theme_fixed_dark),
+                    subtitle = stringResource(R.string.settings_theme_fixed_dark_description),
                     icon = Icons.Default.DarkMode,
                     selected = selectedTheme == AppThemeMode.DARK,
                     onSelect = {
@@ -208,12 +208,12 @@ fun RetentionSettingsDialog(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Dynamic Color (Material You)",
+                            text = stringResource(R.string.settings_dynamic_color),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "Derive colors from your system wallpaper (Android 12+)",
+                            text = stringResource(R.string.settings_dynamic_color_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -234,13 +234,13 @@ fun RetentionSettingsDialog(
 
                 // Section 2: Clipboard Retention Policy
                 Text(
-                    text = "Clip History Retention",
+                    text = stringResource(R.string.settings_retention_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Automatically purge old clips after the selected duration to keep your storage fast and tidy.",
+                    text = stringResource(R.string.settings_retention_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -249,8 +249,8 @@ fun RetentionSettingsDialog(
 
                 // Option: 1 Day
                 RetentionOptionRow(
-                    label = "1 Day",
-                    subtitle = "Aggressive privacy - purges items daily",
+                    label = stringResource(R.string.settings_retention_one_day),
+                    subtitle = stringResource(R.string.settings_retention_one_day_description),
                     selected = selectedOption == "1",
                     onSelect = { selectedOption = "1" },
                     testTag = "retention_option_1_day"
@@ -258,8 +258,8 @@ fun RetentionSettingsDialog(
 
                 // Option: 7 Days
                 RetentionOptionRow(
-                    label = "7 Days (Recommended)",
-                    subtitle = "Balanced history window",
+                    label = stringResource(R.string.settings_retention_seven_days),
+                    subtitle = stringResource(R.string.settings_retention_seven_days_description),
                     selected = selectedOption == "7",
                     onSelect = { selectedOption = "7" },
                     testTag = "retention_option_7_days"
@@ -267,8 +267,8 @@ fun RetentionSettingsDialog(
 
                 // Option: 30 Days
                 RetentionOptionRow(
-                    label = "30 Days",
-                    subtitle = "Generous archive window",
+                    label = stringResource(R.string.settings_retention_thirty_days),
+                    subtitle = stringResource(R.string.settings_retention_thirty_days_description),
                     selected = selectedOption == "30",
                     onSelect = { selectedOption = "30" },
                     testTag = "retention_option_30_days"
@@ -276,8 +276,8 @@ fun RetentionSettingsDialog(
 
                 // Option: Custom
                 RetentionOptionRow(
-                    label = "Custom duration",
-                    subtitle = "Specify any custom day count",
+                    label = stringResource(R.string.settings_retention_custom),
+                    subtitle = stringResource(R.string.settings_retention_custom_description),
                     selected = selectedOption == "custom",
                     onSelect = { selectedOption = "custom" },
                     testTag = "retention_option_custom"
@@ -297,7 +297,7 @@ fun RetentionSettingsDialog(
                                     customDaysText = input
                                 }
                             },
-                            label = { Text("Days") },
+                            label = { Text(stringResource(R.string.settings_days)) },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             shape = RoundedCornerShape(10.dp),
@@ -307,7 +307,7 @@ fun RetentionSettingsDialog(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "days until clip expires",
+                            text = stringResource(R.string.settings_days_until_expiry),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -316,8 +316,8 @@ fun RetentionSettingsDialog(
 
                 // Option: Never Expire
                 RetentionOptionRow(
-                    label = "Never expire",
-                    subtitle = "Keep all clips indefinitely until manually deleted",
+                    label = stringResource(R.string.settings_retention_never),
+                    subtitle = stringResource(R.string.settings_retention_never_description),
                     selected = selectedOption == "never",
                     onSelect = { selectedOption = "never" },
                     testTag = "retention_option_never"
@@ -343,7 +343,7 @@ fun RetentionSettingsDialog(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Starred items are always protected and will never be auto-deleted.",
+                            text = stringResource(R.string.settings_starred_protection_note),
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             fontSize = 12.sp,
@@ -402,7 +402,7 @@ fun RetentionSettingsDialog(
                 Spacer(modifier = Modifier.height(14.dp))
                 // Section 4: Automatic Capture Settings
                 Text(
-                    text = "Automatic Capture",
+                    text = stringResource(R.string.settings_automatic_capture),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -419,12 +419,12 @@ fun RetentionSettingsDialog(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Automatic Clipboard Capture",
+                            text = stringResource(R.string.settings_automatic_clipboard_capture),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "Inspect and save new copied items automatically whenever ClipNest gains focus or receives a clip update",
+                            text = stringResource(R.string.settings_automatic_clipboard_capture_description),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -442,7 +442,7 @@ fun RetentionSettingsDialog(
 
                 // Section 4: Maintenance Actions
                 Text(
-                    text = "Maintenance Actions",
+                    text = stringResource(R.string.settings_maintenance_actions),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -463,7 +463,7 @@ fun RetentionSettingsDialog(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Purge Expired Clips Now")
+                    Text(stringResource(R.string.settings_purge_expired_now))
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -484,7 +484,7 @@ fun RetentionSettingsDialog(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Clear Clip History...")
+                    Text(stringResource(R.string.settings_clear_clip_history_action))
                 }
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -493,13 +493,13 @@ fun RetentionSettingsDialog(
 
                 // Section 5: App Updates
                 Text(
-                    text = "App Updates",
+                    text = stringResource(R.string.settings_app_updates),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Check the official repository for new versions, security patches, and features.",
+                    text = stringResource(R.string.settings_app_updates_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -522,7 +522,7 @@ fun RetentionSettingsDialog(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Check for updates")
+                    Text(stringResource(R.string.settings_check_for_updates))
                 }
             }
         },
@@ -554,7 +554,7 @@ fun RetentionSettingsDialog(
                 },
                 modifier = Modifier.testTag("save_settings_button")
             ) {
-                Text("Save Settings")
+                Text(stringResource(R.string.settings_save))
             }
         },
         dismissButton = {
@@ -562,7 +562,7 @@ fun RetentionSettingsDialog(
                 onClick = onDismiss,
                 modifier = Modifier.testTag("cancel_settings_button")
             ) {
-                Text("Close")
+                Text(stringResource(R.string.settings_close))
             }
         },
         shape = RoundedCornerShape(24.dp)
@@ -574,13 +574,13 @@ fun RetentionSettingsDialog(
             onDismissRequest = { showClearConfirmDialog = false },
             title = {
                 Text(
-                    text = "Clear Clip History",
+                    text = stringResource(R.string.settings_clear_clip_history_title),
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
-                    text = "Choose whether to preserve your starred clips or wipe all saved clipboard items completely."
+                    text = stringResource(R.string.settings_clear_clip_history_description)
                 )
             },
             confirmButton = {
@@ -591,7 +591,7 @@ fun RetentionSettingsDialog(
                     },
                     modifier = Modifier.testTag("clear_keep_starred_button")
                 ) {
-                    Text("Keep Starred (Safe)")
+                    Text(stringResource(R.string.settings_keep_starred))
                 }
             },
             dismissButton = {
@@ -605,7 +605,7 @@ fun RetentionSettingsDialog(
                     ),
                     modifier = Modifier.testTag("clear_everything_button")
                 ) {
-                    Text("Wipe Everything")
+                    Text(stringResource(R.string.settings_wipe_everything))
                 }
             },
             shape = RoundedCornerShape(20.dp)

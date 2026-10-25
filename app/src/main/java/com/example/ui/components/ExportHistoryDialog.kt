@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -39,14 +41,14 @@ fun ExportHistoryDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    val plainTextExport = buildPlainTextExport(clips)
+    val plainTextExport = buildPlainTextExport(context, clips)
     val jsonExport = buildJsonExport(clips)
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Export Clipboard History",
+                text = stringResource(R.string.export_history_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -58,7 +60,7 @@ fun ExportHistoryDialog(
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Export ${clips.size} saved clipboard items to another app, email, or backup note.",
+                    text = stringResource(R.string.export_description, clips.size),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -72,7 +74,7 @@ fun ExportHistoryDialog(
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(
-                            text = "Formatted Text (${clips.size} items)",
+                            text = stringResource(R.string.formatted_text_items, clips.size),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -98,7 +100,7 @@ fun ExportHistoryDialog(
                 ) {
                     Icon(Icons.Default.TextFields, contentDescription = null)
                     Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                    Text("Share as Formatted Text")
+                    Text(stringResource(R.string.share_formatted_text))
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -113,7 +115,7 @@ fun ExportHistoryDialog(
                 ) {
                     Icon(Icons.Default.DataObject, contentDescription = null)
                     Spacer(modifier = Modifier.padding(horizontal = 4.dp))
-                    Text("Share as JSON Backup")
+                    Text(stringResource(R.string.share_json_backup))
                 }
             }
         },
@@ -122,21 +124,21 @@ fun ExportHistoryDialog(
                 onClick = onDismiss,
                 modifier = Modifier.testTag("close_export_dialog")
             ) {
-                Text("Done")
+                Text(stringResource(R.string.done))
             }
         },
         shape = RoundedCornerShape(24.dp)
     )
 }
 
-private fun buildPlainTextExport(clips: List<ClipItem>): String {
+private fun buildPlainTextExport(context: Context, clips: List<ClipItem>): String {
     val sb = StringBuilder()
-    sb.appendLine("=== ClipNest History Export (${clips.size} items) ===")
-    sb.appendLine("Generated: ${DateFormatter.formatFullDateTime(System.currentTimeMillis())}\n")
+    sb.appendLine(context.getString(com.example.R.string.export_header, clips.size))
+    sb.appendLine(context.getString(com.example.R.string.export_generated, DateFormatter.formatFullDateTime(System.currentTimeMillis())) + "\n")
 
     clips.forEachIndexed { index, clip ->
-        val star = if (clip.isPinned) " [★ STARRED]" else ""
-        val label = if (!clip.label.isNullOrBlank()) " (${clip.label})" else ""
+        val star = if (clip.isPinned) context.getString(com.example.R.string.export_starred) else ""
+        val label = if (!clip.label.isNullOrBlank()) context.getString(com.example.R.string.export_label, clip.label) else ""
         sb.appendLine("[#${index + 1}] [${clip.contentType}]$star$label - ${DateFormatter.formatFullDateTime(clip.lastUsedAt)}")
         sb.appendLine(clip.content)
         sb.appendLine("-".repeat(40))
@@ -176,5 +178,5 @@ private fun shareExport(context: Context, text: String, title: String) {
         putExtra(Intent.EXTRA_TEXT, text)
         type = "text/plain"
     }
-    context.startActivity(Intent.createChooser(sendIntent, "Export ClipNest history"))
+    context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.export_chooser_title)))
 }
