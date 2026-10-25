@@ -1,6 +1,5 @@
 package com.example.ui.components
 
-import android.app.Activity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.FragmentActivity
 import com.example.R
 import com.example.data.preferences.AppLockPreferences
 
@@ -40,7 +40,7 @@ fun AppLockScreen(
     val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
     var error by remember { mutableStateOf(false) }
-    val activity = context as? Activity
+    val activity = context as? FragmentActivity
 
     fun showBiometric() {
         if (activity == null) return
