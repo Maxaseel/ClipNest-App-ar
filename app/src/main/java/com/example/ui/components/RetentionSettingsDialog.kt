@@ -47,11 +47,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.preferences.AppThemeMode
+import com.example.data.preferences.AppLockPreferences
 import com.example.data.preferences.PreferenceManager
 import com.example.ui.theme.StarGold
 
@@ -61,6 +64,12 @@ fun RetentionSettingsDialog(
     isAutoCaptureEnabled: Boolean,
     currentThemeMode: AppThemeMode,
     isDynamicColorEnabled: Boolean,
+    appLockEnabled: Boolean,
+    appLockMethod: AppLockPreferences.Method,
+    appLockPolicy: AppLockPreferences.Policy,
+    appLockTimeoutMinutes: Int,
+    hasAppLockPin: Boolean,
+    onSaveAppLock: (Boolean, AppLockPreferences.Method, AppLockPreferences.Policy, Int, String?) -> Unit,
     onDismiss: () -> Unit,
     onSaveRetention: (days: Int) -> Unit,
     onToggleAutoCapture: (Boolean) -> Unit,
@@ -97,6 +106,13 @@ fun RetentionSettingsDialog(
     var selectedTheme by remember { mutableStateOf(currentThemeMode) }
     var dynamicColorState by remember { mutableStateOf(isDynamicColorEnabled) }
     var showClearConfirmDialog by remember { mutableStateOf(false) }
+    var lockEnabledState by remember { mutableStateOf(appLockEnabled) }
+    var lockMethodState by remember { mutableStateOf(appLockMethod) }
+    var lockPolicyState by remember { mutableStateOf(appLockPolicy) }
+    var lockTimeoutText by remember { mutableStateOf(appLockTimeoutMinutes.toString()) }
+    var newPin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
+    var pinError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -340,7 +356,51 @@ fun RetentionSettingsDialog(
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // Section 3: Automatic Capture Settings
+                // Section 3: Security / App Lock
+                Text(stringResource(R.string.security_app_lock), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.security_app_lock_description), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.security_enable_lock), fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.security_enable_lock_description), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(checked = lockEnabledState, onCheckedChange = { lockEnabledState = it }, modifier = Modifier.testTag("app_lock_switch"))
+                }
+                if (lockEnabledState) {
+                    Text(stringResource(R.string.security_method), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(lockMethodState == AppLockPreferences.Method.BIOMETRIC, { lockMethodState = AppLockPreferences.Method.BIOMETRIC })
+                        Text(stringResource(R.string.security_biometric))
+                        Spacer(Modifier.width(12.dp))
+                        RadioButton(lockMethodState == AppLockPreferences.Method.PIN, { lockMethodState = AppLockPreferences.Method.PIN })
+                        Text(stringResource(R.string.security_pin))
+                    }
+                    Text(stringResource(R.string.security_policy), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                    listOf(
+                        AppLockPreferences.Policy.ON_APP_CLOSE to R.string.security_policy_close,
+                        AppLockPreferences.Policy.ON_SCREEN_OFF to R.string.security_policy_screen,
+                        AppLockPreferences.Policy.IMMEDIATELY to R.string.security_policy_leave,
+                        AppLockPreferences.Policy.AFTER_TIMEOUT to R.string.security_policy_timeout
+                    ).forEach { (policy, labelRes) ->
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(lockPolicyState == policy, { lockPolicyState = policy })
+                            Text(stringResource(labelRes))
+                        }
+                    }
+                    if (lockPolicyState == AppLockPreferences.Policy.AFTER_TIMEOUT) {
+                        OutlinedTextField(lockTimeoutText, { if (it.all(Char::isDigit) && it.length <= 3) lockTimeoutText = it }, label = { Text(stringResource(R.string.security_timeout_minutes)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true, modifier = Modifier.width(120.dp))
+                    }
+                    if (lockMethodState == AppLockPreferences.Method.PIN) {
+                        Text(stringResource(R.string.security_set_pin), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(top = 8.dp))
+                        OutlinedTextField(newPin, { newPin = it }, label = { Text(stringResource(R.string.security_pin_new)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword), singleLine = true, modifier = Modifier.fillMaxWidth())
+                        OutlinedTextField(confirmPin, { confirmPin = it; pinError = false }, label = { Text(stringResource(R.string.security_pin_confirm)) }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword), singleLine = true, modifier = Modifier.fillMaxWidth())
+                        if (pinError) Text(stringResource(if (newPin.length < 4) R.string.security_pin_minimum else R.string.security_pin_mismatch), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+                Spacer(modifier = Modifier.height(14.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Spacer(modifier = Modifier.height(14.dp))
+                // Section 4: Automatic Capture Settings
                 Text(
                     text = "Automatic Capture",
                     style = MaterialTheme.typography.titleSmall,
@@ -482,7 +542,15 @@ fun RetentionSettingsDialog(
                     onSaveRetention(days)
                     onSaveThemeMode(selectedTheme)
                     onToggleDynamicColor(dynamicColorState)
-                    onDismiss()
+                    val timeout = lockTimeoutText.toIntOrNull()?.coerceIn(1, 120) ?: 5
+                    val hasValidNewPin = newPin.isNotBlank() && newPin == confirmPin && newPin.length >= 4
+                    if (lockEnabledState && lockMethodState == AppLockPreferences.Method.PIN && !hasAppLockPin && !hasValidNewPin) {
+                        pinError = true
+                    } else {
+                        val pin = if (hasValidNewPin) newPin else null
+                        onSaveAppLock(lockEnabledState, lockMethodState, lockPolicyState, timeout, pin)
+                        onDismiss()
+                    }
                 },
                 modifier = Modifier.testTag("save_settings_button")
             ) {

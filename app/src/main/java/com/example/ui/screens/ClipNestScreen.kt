@@ -41,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.example.R
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,7 +54,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.app.Activity
 import com.example.data.model.ClipItem
 import com.example.data.preferences.PreferenceManager
+import com.example.data.preferences.AppLockPreferences
 import com.example.ui.components.AddEditClipDialog
+import com.example.ui.components.AppLockScreen
 import com.example.ui.components.ClipCard
 import com.example.ui.components.ClipNestTopBar
 import com.example.ui.components.EmptyStateView
@@ -85,6 +89,10 @@ fun ClipNestScreen(
 
     val context = LocalContext.current
     val activity = context as? Activity
+    val appLockPreferences = remember { AppLockPreferences(context) }
+    var isAppLocked by remember { mutableStateOf(appLockPreferences.enabled) }
+    var lastUnlockAt by remember { mutableStateOf(System.currentTimeMillis()) }
+    var appLockEnabledState by remember { mutableStateOf(appLockPreferences.enabled) }
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -98,8 +106,17 @@ fun ClipNestScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.onResumeCheck()
+            when (event) {
+                Lifecycle.Event.ON_RESUME -> {
+                    viewModel.onResumeCheck()
+                    if (appLockPreferences.enabled) {
+                        val timedOut = appLockPreferences.policy == AppLockPreferences.Policy.AFTER_TIMEOUT &&
+                            System.currentTimeMillis() - lastUnlockAt >= appLockPreferences.timeoutMinutes * 60_000L
+                        if (appLockPreferences.policy == AppLockPreferences.Policy.IMMEDIATELY || timedOut) isAppLocked = true
+                    }
+                }
+                Lifecycle.Event.ON_STOP -> if (appLockPreferences.enabled && appLockPreferences.policy != AppLockPreferences.Policy.AFTER_TIMEOUT) isAppLocked = true
+                else -> Unit
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -113,6 +130,14 @@ fun ClipNestScreen(
         viewModel.eventFlow.collectLatest { message ->
             snackbarHostState.showSnackbar(message)
         }
+    }
+
+    if (isAppLocked && appLockPreferences.enabled) {
+        AppLockScreen(lockPreferences = appLockPreferences) {
+            isAppLocked = false
+            lastUnlockAt = System.currentTimeMillis()
+        }
+        return
     }
 
     Scaffold(
@@ -135,7 +160,7 @@ fun ClipNestScreen(
                         contentDescription = null
                     )
                 },
-                text = { Text("New Clip", fontWeight = FontWeight.SemiBold) },
+                text = { Text(stringResource(R.string.new_clip), fontWeight = FontWeight.SemiBold) },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.testTag("add_clip_fab")
@@ -176,9 +201,9 @@ fun ClipNestScreen(
             ) {
                 Text(
                     text = if (searchQuery.isNotBlank() || selectedFilter != ClipFilterCategory.ALL) {
-                        "Showing ${clips.size} matching of ${stats.totalCount} clips"
+                        stringResource(R.string.clips_matching_count, clips.size, stats.totalCount)
                     } else {
-                        "All Clips (${clips.size})"
+                        stringResource(R.string.clips_all_count, clips.size)
                     },
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.SemiBold,
@@ -195,7 +220,7 @@ fun ClipNestScreen(
                         )
                         Spacer(modifier = Modifier.width(3.dp))
                         Text(
-                            text = "${stats.pinnedCount} starred",
+                            text = stringResource(R.string.clips_starred_count, stats.pinnedCount),
                             style = MaterialTheme.typography.labelSmall,
                             color = StarGold,
                             fontWeight = FontWeight.Medium
@@ -290,6 +315,20 @@ fun ClipNestScreen(
             isAutoCaptureEnabled = autoCaptureEnabled,
             currentThemeMode = themeMode,
             isDynamicColorEnabled = dynamicColor,
+            appLockEnabled = appLockEnabledState,
+            appLockMethod = appLockPreferences.method,
+            appLockPolicy = appLockPreferences.policy,
+            appLockTimeoutMinutes = appLockPreferences.timeoutMinutes,
+            hasAppLockPin = appLockPreferences.hasPin,
+            onSaveAppLock = { enabled, method, policy, timeout, pin ->
+                appLockPreferences.enabled = enabled
+                appLockPreferences.method = method
+                appLockPreferences.policy = policy
+                appLockPreferences.timeoutMinutes = timeout
+                if (pin != null) appLockPreferences.setPin(pin)
+                appLockEnabledState = enabled
+                if (!enabled) isAppLocked = false
+            },
             onDismiss = { showSettingsDialog = false },
             onSaveRetention = { days ->
                 viewModel.updateRetentionDays(days)

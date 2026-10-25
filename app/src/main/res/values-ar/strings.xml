@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">ClipNest</string>
+    <string name="new_clip">مقطع جديد</string>
+    <string name="clips_all_count">كل المقاطع (%1$d)</string>
+    <string name="clips_matching_count">عرض %1$d من أصل %2$d مقطعًا مطابقًا</string>
+    <string name="clips_starred_count">%1$d مميز</string>
+    <string name="security_app_lock">الأمان / قفل التطبيق</string>
+    <string name="security_app_lock_description">احمِ سجل الحافظة عند مغادرة ClipNest أو قفل الشاشة.</string>
+    <string name="security_enable_lock">تفعيل قفل التطبيق</string>
+    <string name="security_enable_lock_description">اطلب المصادقة قبل عرض المقاطع.</string>
+    <string name="security_method">طريقة الفتح</string>
+    <string name="security_biometric">بصمة حيوية</string>
+    <string name="security_pin">رمز PIN</string>
+    <string name="security_policy">طلب المصادقة</string>
+    <string name="security_policy_close">بعد إغلاق التطبيق</string>
+    <string name="security_policy_screen">بعد قفل الشاشة</string>
+    <string name="security_policy_leave">فور مغادرة التطبيق</string>
+    <string name="security_policy_timeout">بعد مدة من عدم النشاط</string>
+    <string name="security_timeout_minutes">الدقائق</string>
+    <string name="security_set_pin">تعيين أو تغيير PIN</string>
+    <string name="security_pin_new">PIN جديد</string>
+    <string name="security_pin_confirm">تأكيد PIN</string>
+    <string name="security_pin_mismatch">الرمزان غير متطابقين</string>
+    <string name="security_pin_minimum">يجب أن يتكون PIN من 4 أرقام على الأقل</string>
+    <string name="lock_title">ClipNest مقفل</string>
+    <string name="lock_unlock_to_continue">افتح القفل لعرض سجل الحافظة.</string>
+    <string name="lock_enter_pin">أدخل PIN للمتابعة.</string>
+    <string name="lock_pin_label">PIN</string>
+    <string name="lock_unlock">فتح القفل</string>
+    <string name="lock_try_biometric">استخدام البصمة</string>
+    <string name="lock_wrong_pin">PIN غير صحيح</string>
+    <string name="lock_biometric_title">فتح ClipNest</string>
+    <string name="lock_biometric_subtitle">تحقق من هويتك لعرض المقاطع.</string>
+    <string name="lock_use_pin">استخدام PIN</string>
+</resources>

@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">ClipNest</string>
+    <string name="new_clip">New Clip</string>
+    <string name="clips_all_count">All Clips (%1$d)</string>
+    <string name="clips_matching_count">Showing %1$d matching of %2$d clips</string>
+    <string name="clips_starred_count">%1$d starred</string>
+    <string name="security_app_lock">Security / App Lock</string>
+    <string name="security_app_lock_description">Protect your clipboard history when ClipNest is left or the screen is locked.</string>
+    <string name="security_enable_lock">Enable app lock</string>
+    <string name="security_enable_lock_description">Require authentication before showing your clips.</string>
+    <string name="security_method">Unlock method</string>
+    <string name="security_biometric">Biometric</string>
+    <string name="security_pin">PIN</string>
+    <string name="security_policy">Ask for authentication</string>
+    <string name="security_policy_close">After closing the app</string>
+    <string name="security_policy_screen">After screen is locked</string>
+    <string name="security_policy_leave">Immediately when leaving the app</string>
+    <string name="security_policy_timeout">After a period of inactivity</string>
+    <string name="security_timeout_minutes">Minutes</string>
+    <string name="security_set_pin">Set or change PIN</string>
+    <string name="security_pin_new">New PIN</string>
+    <string name="security_pin_confirm">Confirm PIN</string>
+    <string name="security_pin_mismatch">PINs do not match</string>
+    <string name="security_pin_minimum">PIN must contain at least 4 digits</string>
+    <string name="lock_title">ClipNest is locked</string>
+    <string name="lock_unlock_to_continue">Unlock to view your clipboard history.</string>
+    <string name="lock_enter_pin">Enter your PIN to continue.</string>
+    <string name="lock_pin_label">PIN</string>
+    <string name="lock_unlock">Unlock</string>
+    <string name="lock_try_biometric">Use biometric</string>
+    <string name="lock_wrong_pin">Incorrect PIN</string>
+    <string name="lock_biometric_title">Unlock ClipNest</string>
+    <string name="lock_biometric_subtitle">Verify your identity to view your clips.</string>
+    <string name="lock_use_pin">Use PIN</string>
 </resources>
